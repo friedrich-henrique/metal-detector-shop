@@ -1,4 +1,4 @@
-name: metal_detector_shop
+name: metal-detector-shop
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   PROJECT_ID: ${{ secrets.CLOUD_RUN_PROJECT_NAME }}
   REGION: us-east1
   # project-name but it can be anything you want
-  REPO_NAME: metal_detector_shop
+  REPO_NAME: metal-detector-shop
 
 jobs:
   build-and-deploy:
