@@ -9,6 +9,8 @@ WORKDIR /usr/app
 # Copying this first prevents re-running npm install on every code change.
 COPY . .
 
+ENV NEXT_PUBLIC_BACKEND_URL='https://shop-api-vp4fj5sm4q-ue.a.run.app'
+
 # Install production dependencies.
 # If you add a package-lock.json, speed your build by switching to 'npm ci'.
 RUN npm ci --only=production
