@@ -18,6 +18,10 @@ module.exports = {
         },
         ecmaVersion: 2020,
         requireConfigFile: false,
+        babelOptions: {
+            parserOpts: {
+              plugins: ["jsx"]
+            }
     },
     plugins: ['react', '@next/eslint-plugin-next', 'prettier'],
     rules: {
