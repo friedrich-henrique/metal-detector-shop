@@ -1,4 +1,4 @@
-name: nextjs-cloudrun-app
+name: metal_detector_shop
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   PROJECT_ID: ${{ secrets.CLOUD_RUN_PROJECT_NAME }}
   REGION: us-east1
   # project-name but it can be anything you want
-  REPO_NAME: nextjs-cloud-run
+  REPO_NAME: metal_detector_shop
 
 jobs:
   build-and-deploy:
