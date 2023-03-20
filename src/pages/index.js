@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/auth'
 
 export default function Home() {
     const { user } = useAuth({ middleware: 'guest' })
+    console.log(process.env.NEXT_PUBLIC_BACKEND_URL)
 
     return (
         <>
