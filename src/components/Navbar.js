@@ -10,7 +10,7 @@ const Navbar = () => {
                         <Link
                             href="#"
                             className="text-sm text-gray-700">
-                            Home
+                            Início
                         </Link>
 
                         <Link
@@ -20,7 +20,7 @@ const Navbar = () => {
                         </Link>
 
                         <Link
-                            href="#about"
+                            href="#sobre"
                             className="ml-4 text-sm text-gray-700">
                             Quem somos
                         </Link>

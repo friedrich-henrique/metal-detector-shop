@@ -8,7 +8,7 @@ export default function Layout({ children }) {
                 <title>SAVEL</title>
             </Head>
             <Navbar></Navbar>
-            <main>{children}</main>
+            <main className="h-screen bg-flex flex-col">{children}</main>
         </>
     )
 }
