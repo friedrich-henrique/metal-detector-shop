@@ -4,7 +4,6 @@ useState
 const Products = () => {
     let [category, setCategory] = useState('detectores')
     const categories = ['detectores', 'britagem', 'máquinas']
-    let [likes, setLikes] = useState(0);
 
     function changeCategory(newCategory) {
         setCategory(newCategory);
@@ -12,12 +11,12 @@ const Products = () => {
     }
     return <>
         <div className="flex text-center bg-gray-100 mt-10 mx-20">
-            <div className='grid grid-rows-2'>
+            <div className='grid grid-rows-2 h-66'>
                 <div className='flex justify-between'>
                     {
                         category === 'detectores' &&
                         <div className='grid grid-cols-3'>
-                            <div class="col m-5">
+                            <div className="col m-5">
                                 <Image
                                     src="/sensor-plano.jpg" // Route of the image file
                                     height={220} // Desired size with correct aspect ratio
@@ -25,7 +24,7 @@ const Products = () => {
                                     alt="Savel logo"
                                 />
                             </div>
-                            <div class="col m-5">
+                            <div className="col m-5">
                                 <Image
                                     src="/sensor-curvo.jpg" // Route of the image file
                                     height={220} // Desired size with correct aspect ratio
@@ -33,7 +32,7 @@ const Products = () => {
                                     alt="Savel logo"
                                 />
                             </div>
-                            <div class="row-start-1 m-5">
+                            <div className="row-start-1 m-5">
                                 <Image
                                     src="/sensor-tunel.jpg" // Route of the image file
                                     height={220} // Desired size with correct aspect ratio
@@ -67,8 +66,6 @@ const Products = () => {
                     </div>
                 </div>
             </div>
-
-
         </div>
 
     </>
