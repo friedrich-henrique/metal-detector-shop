@@ -1,4 +1,3 @@
-import Button from '@/components/Button';
 import  { useRouter } from  'next/router'
 
 const Test  = () => {
@@ -7,7 +6,6 @@ const Test  = () => {
 
     return (
         <>
-        <Button type='submit' className="bg-blue-500">Test button too</Button>
         <p>Post: {pid}</p>
         </>
     )  
