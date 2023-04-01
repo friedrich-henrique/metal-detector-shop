@@ -1,17 +1,9 @@
-const Bar = ({ categories, changeCategory }) => {
+const Bar = ({ pages, changePage }) => {
     return <>
-        <div className="px-2">
-            {categories.map((cat) => {
-                return <a className="mx-5 underline decoration-sky-500 text-l text-sky-400 hover:text-white font-semibold whitespace-nowrap">
-                    <span className='' key={cat} onClick={() => changeCategory(cat)}>{
-                        cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </span>
-                </a>
-            })}
-            <a className="mx-5 underline decoration-sky-500 text-l text-sky-400 hover:text-white font-semibold whitespace-nowrap" href="/shop">
-                Ir para loja
-            </a>
-        </div>
+        {pages.map((page) => {
+            return <button className="w-5 h-5 rounded-full bg-blue-500 hover:bg-blue-800 text-white mx-5" onClick={() => changePage(page)}>
+            </button>
+        })}
     </>
 }
 export default Bar

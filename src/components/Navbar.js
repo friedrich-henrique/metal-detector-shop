@@ -3,6 +3,7 @@ import ApplicationLogo from '@/components/ApplicationLogo'
 import { useState } from 'react'
 const Navbar = () => {
     const [navOpen, setNavOpen] = useState(false)
+    const navItems = ['Início', 'Produtos', 'Sobre', 'Contato']
     return <header className='sticky top-0 z-30 w-full px-2 py-2 bg-white'>
         <nav className='top-0 z-100 mx-auto px-4'>
             <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
@@ -13,29 +14,13 @@ const Navbar = () => {
                 <section className='MOBILE-MENU flex md:hidden'>
                     <div className={navOpen ? 'showMenuNav' : 'hideMenuNav'}>
                         <div className='flex flex-col items-center justify-between min-h-[250px]'>
-                            <Link
-                                href="#"
-                                className="text-sm text-gray-700">
-                                Início
-                            </Link>
-
-                            <Link
-                                href="#produtos"
-                                className="ml-4 text-sm text-gray-700">
-                                Produtos
-                            </Link>
-
-                            <Link
-                                href="#sobre"
-                                className="ml-4 text-sm text-gray-700">
-                                Quem somos
-                            </Link>
-
-                            <Link
-                                href="#contato"
-                                className="ml-4 text-sm text-gray-700">
-                                Contato
-                            </Link>
+                            {navItems.map((item) => {
+                                return <Link
+                                    href={`#${item.toLowerCase()}`}
+                                    className="text-sm text-gray-700">
+                                    {item}
+                                </Link>
+                            })}
                         </div>
                     </div>
 
@@ -49,29 +34,13 @@ const Navbar = () => {
 
                 <section className='DESKTOP-MENU hidden lg:flex md:flex'>
                     <div className='w-full sm:w-auto md:flex lg:flex items-center sm:gap-x-12'>
-                        <Link
-                            href="#"
-                            className="text-sm text-gray-700">
-                            Desktop
-                        </Link>
-
-                        <Link
-                            href="#produtos"
-                            className="ml-4 text-sm text-gray-700">
-                            Produtos
-                        </Link>
-
-                        <Link
-                            href="#sobre"
-                            className="ml-4 text-sm text-gray-700">
-                            Quem somos
-                        </Link>
-
-                        <Link
-                            href="#contato"
-                            className="ml-4 text-sm text-gray-700">
-                            Contato
-                        </Link>
+                        {navItems.map((item) => {
+                            return <Link
+                                href={`#${item.toLowerCase()}`}
+                                className="text-sm text-gray-700">
+                                {item}
+                            </Link>
+                        })}
                     </div>
 
                 </section>
