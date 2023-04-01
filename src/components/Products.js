@@ -11,7 +11,7 @@ const Products = () => {
     }
 
     return <>
-        <div className="grid grid-rows-2 justify-items-center h-80 bg-gray-100 mt-10 mx-20">
+        <div className="grid grid-rows-2 justify-items-center h-80 bg-gray-100 rounded-lg mt-10 mx-20 inline-center">
             <div className='row'>
                 <ImageGrid category={category}></ImageGrid>
             </div>

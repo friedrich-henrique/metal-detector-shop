@@ -5,7 +5,9 @@ import Products from '@/components/Products';
 export default function Home() {
     return (
         <>
-            <Leading></Leading>
+            <div id='leading'>
+                <Leading></Leading>
+            </div>
             <div id='produtos'>
                 <Products></Products>
             </div>
