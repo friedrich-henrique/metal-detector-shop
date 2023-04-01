@@ -8,9 +8,6 @@ export default function Home() {
             <div id='leading'>
                 <Leading></Leading>
             </div>
-            <div id='produtos'>
-                <Products></Products>
-            </div>
             <div id='sobre'>
                 <About></About>
             </div>
