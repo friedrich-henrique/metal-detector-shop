@@ -3,7 +3,20 @@ import ApplicationLogo from '@/components/ApplicationLogo'
 import { useState } from 'react'
 const Navbar = () => {
     const [navOpen, setNavOpen] = useState(false)
-    const navItems = ['Início', 'Produtos', 'Sobre', 'Contato']
+    const navItems = {
+        'home': {
+            'link': '',
+            'título': 'Ínicio'
+        },
+        'shop': {
+            'link': 'shop',
+            'título': 'Loja'
+        },
+        'support': {
+            'link': 'support',
+            'título': 'Assistência Técnica'
+        },
+    }
     return <header className='sticky top-0 z-30 w-full px-2 py-2 bg-white'>
         <nav className='top-0 z-100 mx-auto px-4'>
             <div class="max-w-screen-xl flex items-center justify-between mx-auto p-4">
@@ -14,11 +27,11 @@ const Navbar = () => {
                 <section className='MOBILE-MENU flex md:hidden'>
                     <div className={navOpen ? 'showMenuNav' : 'hideMenuNav'}>
                         <div className='flex flex-col items-center justify-between min-h-[250px]'>
-                            {navItems.map((item) => {
+                            {Object.keys(navItems).map((key) => {
                                 return <Link
-                                    href={`#${item.toLowerCase()}`}
+                                    href={`/${navItems[key].link.toLowerCase()}`}
                                     className="text-sm text-gray-700">
-                                    {item}
+                                    {navItems[key].título}
                                 </Link>
                             })}
                         </div>
@@ -34,11 +47,11 @@ const Navbar = () => {
 
                 <section className='DESKTOP-MENU hidden lg:flex md:flex'>
                     <div className='w-full sm:w-auto md:flex lg:flex items-center sm:gap-x-12'>
-                        {navItems.map((item) => {
+                        {Object.keys(navItems).map((key) => {
                             return <Link
-                                href={`#${item.toLowerCase()}`}
+                                href={`/${navItems[key].link.toLowerCase()}`}
                                 className="text-sm text-gray-700">
-                                {item}
+                                {navItems[key].título}
                             </Link>
                         })}
                     </div>

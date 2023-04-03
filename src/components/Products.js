@@ -11,7 +11,7 @@ const Products = () => {
     }
 
     return <>
-        <div className="grid justify-items-center bg-gray-100 rounded-lg mt-10 mx-20 inline-center">
+        <div className="grid justify-items-center bg-gray-100 rounded-lg mt-10 mx-20">
             <div className='mb-10'>
                 {
                     page == 1 && <ImageGrid images={['detector-curvo.jpg', 'detector-plano.jpg', 'detector-tunel.jpg', 'detector-alimenticio.jpg']}></ImageGrid>
