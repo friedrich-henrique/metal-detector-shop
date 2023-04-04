@@ -161,14 +161,11 @@ const Shop = () => {
     function addToCart(product) {
         product.quantity = 1
         if(notInCart(product)){
-            console.log(`not in cart`)
             setCart([...cart, product]) 
         } else {
-            console.log(`in cart`)
             const itemForCountIncrease = cart.find((item) => item.id == product.id);
-            itemForCountIncrease.quantity += 1;
+            itemForCountIncrease.quantity = Number(itemForCountIncrease.quantity) + 1;
             setCart([...cart.filter((item) => item.id != product.id), itemForCountIncrease]);
-            //console.log(itemForCountIncrease)
         }
         setSubtotal(Number(subtotal) + Number(product.preço))
     }
