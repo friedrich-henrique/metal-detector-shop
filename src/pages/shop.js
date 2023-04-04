@@ -3,14 +3,14 @@ import axios from '@/lib/axios'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
-const Cart = ({ cart, subtotal, removeProductFromCart }) => {
+const Cart = ({ cart, subtotal, removeProductFromCart, closeSlideOver }) => {
     return <>
-        <div class="flex flex-col overflow-y-scroll bg-white shadow-xl">
+        <div class="flex flex-col overflow-y-scroll h-full bg-white shadow-xl w-1/4 right-0">
             <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                 <div class="flex items-start justify-between">
                     <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Carrinho</h2>
                     <div class="ml-3 flex h-7 items-center">
-                        <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500">
+                        <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500" onClick={() =>closeSlideOver()}>
                             <span class="sr-only">Fechar carrinho</span>
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -122,6 +122,7 @@ const Shop = () => {
     const [errors, setErrors] = useState([])
     const [cart, setCart] = useState([])
     const [subtotal, setSubtotal] = useState(0)
+    let slideOver = true
 
     useEffect(() => {
         fetchProducts()
@@ -145,11 +146,11 @@ const Shop = () => {
             setErrors(err.response)
         })
     }
-    
+
     function formatPrice(price) {
         return price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
     }
-    function notInCart(product){
+    function notInCart(product) {
         for (let item of cart) {
             if (item.id === product.id) {
                 return false
@@ -160,8 +161,8 @@ const Shop = () => {
     }
     function addToCart(product) {
         product.quantity = 1
-        if(notInCart(product)){
-            setCart([...cart, product]) 
+        if (notInCart(product)) {
+            setCart([...cart, product])
         } else {
             const itemForCountIncrease = cart.find((item) => item.id == product.id);
             itemForCountIncrease.quantity = Number(itemForCountIncrease.quantity) + 1;
@@ -173,6 +174,11 @@ const Shop = () => {
     function removeProductFromCart(product) {
         setCart(cart.filter((item) => item.id !== product.id))
     }
+
+    function closeSlideOver() {
+        slideOver = false
+        console.log(slideOver)
+    }
     return <>
 
         {
@@ -183,17 +189,23 @@ const Shop = () => {
         }
         {
             state === 'done' &&
-            <div className="mx-auto lg:gap-2 lg:grid lg:grid-cols-3 my-8">
+            <div class="w-screen flex">
                 {
-                    Object.keys(products).map((keyName) => (
-                        <Product product={products[keyName]} addToCart={addToCart} />
-                    ))
+                    <div className="mx-auto lg:gap-2 lg:grid lg:grid-cols-3 my-8">
+                        {
+                            Object.keys(products).map((keyName) => (
+                                <Product product={products[keyName]} addToCart={addToCart} />
+                            ))
+                        }
+                    </div>
                 }
                 {
-                    cart.length > 0 &&
-                    <Cart cart={cart} subtotal={subtotal} removeProductFromCart={removeProductFromCart} />
+                    (cart.length > 0 && slideOver === true) &&
+                    <Cart cart={cart} subtotal={subtotal} removeProductFromCart={removeProductFromCart} closeSlideOver={closeSlideOver}/>
                 }
+
             </div>
+
         }
     </>
 }
