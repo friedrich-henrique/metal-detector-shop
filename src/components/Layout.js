@@ -9,11 +9,12 @@ export default function Layout({ children }) {
             <Head>
                 <title>SAVEL</title>
             </Head>
-            <Navbar></Navbar>
-            <main className="h-screen bg-flex flex-col">{children}
-                <div id="contato">
-                    <Contact></Contact>
+            <main className="min-h-screen relative bg-flex flex-col">
+                <Navbar></Navbar>
+                <div className="lg:pb-28">
+                    {children}
                 </div>
+                <Contact></Contact>
             </main>
         </>
     )

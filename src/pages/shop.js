@@ -1,10 +1,11 @@
+import Loading from '@/components/Loading';
 import axios from '@/lib/axios'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
 const Cart = ({ cart, subtotal, removeProductFromCart }) => {
     return <>
-        <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+        <div class="flex flex-col overflow-y-scroll bg-white shadow-xl">
             <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                 <div class="flex items-start justify-between">
                     <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Carrinho</h2>
@@ -144,29 +145,55 @@ const Shop = () => {
             setErrors(err.response)
         })
     }
+    
     function formatPrice(price) {
         return price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
     }
+    function notInCart(product){
+        for (let item of cart) {
+            if (item.id === product.id) {
+                return false
+            }
+        }
+        return true
+
+    }
     function addToCart(product) {
         product.quantity = 1
-        setCart([...cart, product])
+        if(notInCart(product)){
+            console.log(`not in cart`)
+            setCart([...cart, product]) 
+        } else {
+            console.log(`in cart`)
+        }
         setSubtotal(Number(subtotal) + Number(product.preço))
     }
+
     function removeProductFromCart(product) {
         setCart(cart.filter((item) => item.id !== product.id))
     }
     return <>
-        <div className="mx-auto lg:gap-2 lg:grid lg:grid-cols-3 my-3">
-            {state === 'done' &&
-                Object.keys(products).map((keyName) => (
-                    <Product product={products[keyName]} addToCart={addToCart} />
-                ))
-            }
-            {cart.length > 0 &&
-                <Cart cart={cart} subtotal={subtotal} removeProductFromCart={removeProductFromCart} />
-            }
 
-        </div>
+        {
+            state === 'loading' &&
+            <div className="grid place-content-center h-80">
+                <Loading></Loading>
+            </div>
+        }
+        {
+            state === 'done' &&
+            <div className="mx-auto lg:gap-2 lg:grid lg:grid-cols-3 my-8">
+                {
+                    Object.keys(products).map((keyName) => (
+                        <Product product={products[keyName]} addToCart={addToCart} />
+                    ))
+                }
+                {
+                    cart.length > 0 &&
+                    <Cart cart={cart} subtotal={subtotal} removeProductFromCart={removeProductFromCart} />
+                }
+            </div>
+        }
     </>
 }
 
