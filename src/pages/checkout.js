@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
 
 
 const Checkout = () => {
     const router = useRouter();
-    const { subtotal, cart } = router.query;
     const [email, setEmail] = useState('');
     const [endereco, setEndereco] = useState('');
     const [cidade, setCidade] = useState('');
@@ -13,11 +12,23 @@ const Checkout = () => {
     const [cep, setCep] = useState('');
     const [telefone, setTelefone] = useState('');
     const [frete, setFrete] = useState(0);
-    const [total, setTotal] = useState(subtotal + frete);
+    const [subtotal, setSubtotal] = useState(null)
+    const [total, setTotal] = useState(null);
     const [items, setItems] = useState('');
     const [selectedShipping, setSelectedShipping] = useState('');
 
-    cart ? setItems(JSON.parse(cart)) : setItems('')
+    useEffect(() => {
+        const { subtotal, cart } = router.query
+        if (cart) {
+            setItems(JSON.parse(cart))
+        }
+        if (subtotal) {
+          setSubtotal(subtotal)
+          setTotal(subtotal + frete)
+          
+        }
+      }, [router.query])
+
     const handleRadioChange = (event) => {
         setSelectedShipping(event.target.value);
     };
@@ -176,7 +187,7 @@ const Checkout = () => {
                         <div class="mt-6 border-t border-b py-2">
                             <div class="flex items-center justify-between">
                                 <p class="text-sm font-medium text-gray-900">Subtotal</p>
-                                <p class="font-semibold text-gray-900">{subtotal}</p>
+                                <p class="font-semibold text-gray-900">{ subtotal}</p>
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm font-medium text-gray-900">Frete</p>
