@@ -1,6 +1,7 @@
 import Loading from '@/components/Loading';
 import axios from '@/lib/axios'
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 const CartButton = ({ openCart, count }) => {
@@ -92,7 +93,15 @@ const Cart = ({ cart, subtotal, removeProductFromCart, closeCart }) => {
             {
                 cart.length !== 0 &&
                 <div class="mt-6">
-                    <a href="#" class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Finalizar pedido</a>
+                    <Link
+                    className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                    href={{
+                        pathname: '/checkout',
+                        query: { subtotal: subtotal, cart: JSON.stringify(cart) }
+                    }}
+                    >
+                    Finalizar pedido
+                    </Link>
                 </div>
             }
 
@@ -256,7 +265,6 @@ const Shop = () => {
                     <CartButton openCart={openCart} count={count} />
                 }
             </div>
-
         }
     </>
 }
