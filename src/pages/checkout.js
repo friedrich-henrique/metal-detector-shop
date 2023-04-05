@@ -14,9 +14,10 @@ const Checkout = () => {
     const [telefone, setTelefone] = useState('');
     const [frete, setFrete] = useState(0);
     const [total, setTotal] = useState(subtotal + frete);
-    const [items, setItems] = useState(JSON.parse(cart));
+    const [items, setItems] = useState('');
     const [selectedShipping, setSelectedShipping] = useState('');
 
+    cart ? setItems(JSON.parse(cart)) : setItems('')
     const handleRadioChange = (event) => {
         setSelectedShipping(event.target.value);
     };
