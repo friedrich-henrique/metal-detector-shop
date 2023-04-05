@@ -3,14 +3,33 @@ import axios from '@/lib/axios'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
-const Cart = ({ cart, subtotal, removeProductFromCart, closeSlideOver }) => {
+const CartButton = ({ openCart, count }) => {
     return <>
-        <div class="flex flex-col overflow-y-scroll h-full bg-white shadow-xl w-1/4 right-0">
+        <div class="mx-auto mt-16">
+            <button className='relative rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700' onClick={() => { openCart() }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                {count > 0 &&
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 px-4 py-1 bg-indigo-200 rounded-full">
+                        {count}
+                    </div>
+                }
+            </button>
+        </div>
+
+    </>
+}
+
+
+const Cart = ({ cart, subtotal, removeProductFromCart, closeCart }) => {
+    return <>
+        <div class="flex flex-col overflow-y-scroll h-full bg-white shadow-xl lg:w-1/4 right-0 transition">
             <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                 <div class="flex items-start justify-between">
                     <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Carrinho</h2>
                     <div class="ml-3 flex h-7 items-center">
-                        <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500" onClick={() =>closeSlideOver()}>
+                        <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500" onClick={() => closeCart()}>
                             <span class="sr-only">Fechar carrinho</span>
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -22,6 +41,11 @@ const Cart = ({ cart, subtotal, removeProductFromCart, closeSlideOver }) => {
                 <div class="mt-8">
                     <div class="flow-root">
                         <ul role="list" class="-my-6 divide-y divide-gray-200">
+                            {cart.length == 0 &&
+                                <div class="flex justify-center py-6">
+                                    Seu carrinho ainda está vazio.
+                                </div>
+                            }
                             {
                                 cart.map((item) => {
                                     return <li class="flex py-6">
@@ -66,9 +90,13 @@ const Cart = ({ cart, subtotal, removeProductFromCart, closeSlideOver }) => {
                     <p>{subtotal}</p>
                 </div>
                 <p class="mt-0.5 text-sm text-gray-500">O frete será calculado antes da finalização do pedido</p>
-                <div class="mt-6">
-                    <a href="#" class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Finalizar pedido</a>
-                </div>
+                {
+                    cart.length !== 0 &&
+                    <div class="mt-6">
+                        <a href="#" class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Finalizar pedido</a>
+                    </div>
+                }
+
             </div>
         </div>
 
@@ -122,11 +150,30 @@ const Shop = () => {
     const [errors, setErrors] = useState([])
     const [cart, setCart] = useState([])
     const [subtotal, setSubtotal] = useState(0)
-    let slideOver = true
-
+    const [showCart, setShowCart] = useState(false)
+    const [count, setCount] = useState(0)
     useEffect(() => {
         fetchProducts()
     }, [])
+
+    useEffect(() => {
+        if (cart.length > 0) {
+            let total = 0
+            cart.map((item) => {
+                total += item.preço * item.quantity
+            })
+            let count = 0
+            cart.map((item) => {
+                count += item.quantity
+            })
+            setCount(count)
+            setSubtotal(formatPrice(total))
+        } else {
+            setSubtotal(formatPrice(0))
+            setCount(0)
+            setShowCart(false)
+        }
+    }, [cart])
 
     const csrf = () => axios.get('/sanctum/csrf-cookie')
 
@@ -150,34 +197,35 @@ const Shop = () => {
     function formatPrice(price) {
         return price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
     }
-    function notInCart(product) {
-        for (let item of cart) {
-            if (item.id === product.id) {
-                return false
-            }
-        }
-        return true
 
-    }
     function addToCart(product) {
         product.quantity = 1
-        if (notInCart(product)) {
-            setCart([...cart, product])
+        const existingItemIndex = cart.findIndex((item) => item.id === product.id);
+        if (existingItemIndex !== -1) {
+            const existingItem = cart[existingItemIndex];
+            const updatedItem = {
+                ...existingItem,
+                quantity: existingItem.quantity + 1,
+            };
+            const updatedCart = [...cart];
+            updatedCart[existingItemIndex] = updatedItem;
+            setCart(updatedCart);
         } else {
-            const itemForCountIncrease = cart.find((item) => item.id == product.id);
-            itemForCountIncrease.quantity = Number(itemForCountIncrease.quantity) + 1;
-            setCart([...cart.filter((item) => item.id != product.id), itemForCountIncrease]);
+            setCart([...cart, product])
         }
-        setSubtotal(Number(subtotal) + Number(product.preço))
+        setShowCart(true)
     }
 
     function removeProductFromCart(product) {
         setCart(cart.filter((item) => item.id !== product.id))
     }
 
-    function closeSlideOver() {
-        slideOver = false
-        console.log(slideOver)
+    function closeCart() {
+        setShowCart(false)
+    }
+
+    function openCart() {
+        setShowCart(true)
     }
     return <>
 
@@ -189,9 +237,9 @@ const Shop = () => {
         }
         {
             state === 'done' &&
-            <div class="w-screen flex">
+            <div class="w-full flex">
                 {
-                    <div className="mx-auto lg:gap-2 lg:grid lg:grid-cols-3 my-8">
+                    <div className="mx-auto lg:gap-12 lg:grid lg:grid-cols-3 my-8">
                         {
                             Object.keys(products).map((keyName) => (
                                 <Product product={products[keyName]} addToCart={addToCart} />
@@ -200,10 +248,13 @@ const Shop = () => {
                     </div>
                 }
                 {
-                    (cart.length > 0 && slideOver === true) &&
-                    <Cart cart={cart} subtotal={subtotal} removeProductFromCart={removeProductFromCart} closeSlideOver={closeSlideOver}/>
+                    showCart &&
+                    <Cart cart={cart} subtotal={subtotal} removeProductFromCart={removeProductFromCart} closeCart={closeCart} />
                 }
-
+                {
+                    !showCart &&
+                    <CartButton openCart={openCart} count={count} />
+                }
             </div>
 
         }
