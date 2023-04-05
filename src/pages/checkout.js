@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Image from 'next/image';
 
-export default function Checkout() {
 
+const Checkout = () => {
     const router = useRouter();
     const { subtotal, cart } = router.query;
     const [email, setEmail] = useState('');
@@ -193,9 +193,9 @@ export default function Checkout() {
                         </button>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </>
 }
+
+export default Checkout
