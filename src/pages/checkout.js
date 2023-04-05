@@ -153,8 +153,7 @@ const Checkout = () => {
                     <p class="text-xl font-medium">Resumo do pedido</p>
                     <p class="text-gray-400">Cheque seus items e selecione o método de envio e pagamento.</p>
                     <div class="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-
-                        {
+                        { items.length > 0 &&
                             items.map((item) => {
                                 return <div class="flex flex-col rounded-lg bg-white sm:flex-row my-5">
                                     <div className="h-24 w-40">
