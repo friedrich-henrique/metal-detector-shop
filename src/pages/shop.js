@@ -1,7 +1,6 @@
 import Loading from '@/components/Loading';
 import axios from '@/lib/axios'
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 const CartButton = ({ openCart, count }) => {
@@ -22,94 +21,229 @@ const CartButton = ({ openCart, count }) => {
     </>
 }
 
+const ShippingDetails = ({ changeState }) => {
+    const csrf = () => axios.get('/sanctum/csrf-cookie')
+    const [email, setEmail] = useState('');
+    const [endereco, setEndereco] = useState('');
+    const [cidade, setCidade] = useState('');
+    const [estado, setEstado] = useState('');
+    const [cep, setCep] = useState('');
+    const [telefone, setTelefone] = useState('');
+    const [errors, setErrors] = useState({});
 
-const Cart = ({ cart, subtotal, removeProductFromCart, closeCart }) => {
+
+    const setParentState = (state) => {
+        changeState(state)
+    }
+    const handleSubmit = async (e) => {
+        await csrf()
+        setParentState('loading')
+
+        e.preventDefault();
+        // handle form submission logic here
+        axios.post('/api/checkout', {
+            email: email,
+            endereco: endereco,
+            cidade: cidade,
+            estado: estado,
+            cep: cep,
+            telefone: telefone
+        }).then(
+            setParentState('success')
+        ).catch(err => {
+            console.log(errors)
+            setErrors(err.response)
+        })
+    };
+
     return <>
-        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-            <div class="flex items-start justify-between">
-                <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Carrinho</h2>
-                <div class="ml-3 flex h-7 items-center">
-                    <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500" onClick={() => closeCart()}>
-                        <span class="sr-only">Fechar carrinho</span>
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+        <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
+            <div class="flex justify-between text-base font-medium font-semibold text-gray-900">
+                <p>Contato</p>
+            </div>
+
+            <p class="mt-0.5 text-sm text-gray-500 my-3">Enviaremos um orçamento para você assim em até dois dias úteis.</p>
+            <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                    <label htmlFor="email" className="block mb-2 font-semibold">Email</label>
+                    <input
+                        id="email"
+                        type="email"
+                        className="w-full p-2 border rounded-md"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="endereco" className="block mb-2 font-semibold">Endereço</label>
+                    <input
+                        id="endereco"
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <div class="flex flex-col w-full sm:flex-row justify-between">
+                    <div className="mb-4 lg:w-1/2 lg:mr-2">
+                        <label htmlFor="cidade" className="mb-2 font-semibold">Cidade</label>
+                        <input
+                            id="cidade"
+                            type="text"
+                            className="w-full p-2 border rounded-md"
+                            value={cidade}
+                            onChange={(e) => setCidade(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="mb-4 lg:w-1/2 lg:ml-2">
+                        <label htmlFor="estado" className="mb-2 font-semibold">Estado</label>
+                        <input
+                            id="estado"
+                            type="text"
+                            className="w-full p-2 border rounded-md"
+                            value={estado}
+                            onChange={(e) => setEstado(e.target.value)}
+                            required
+                        />
+                    </div>
+                </div>
+
+
+                <div className="mb-4">
+                    <label htmlFor="cep" className="block mb-2 font-semibold">CEP</label>
+                    <input
+                        id="cep"
+                        type="text"
+                        className="w-full p-2 border rounded-md"
+                        value={cep}
+                        onChange={(e) => setCep(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="telefone" className="block mb-2 font-semibold">Telefone</label>
+                    <input
+                        id="telefone"
+                        type="tel"
+                        className="w-full p-2 border rounded-md"
+                        value={telefone}
+                        onChange={(e) => setTelefone(e.target.value)}
+                        required
+                    />
+                </div>
+            </form>
+            {
+
+                <div class="mt-6">
+                    <button
+                        className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                        onClick={handleSubmit}
+                    >
+                        Finalizar pedido
                     </button>
                 </div>
-            </div>
-
-            <div class="mt-8">
-                <div class="flow-root">
-                    <ul role="list" class="-my-6 divide-y divide-gray-200">
-                        {cart.length == 0 &&
-                            <div class="flex justify-center py-6">
-                                Seu carrinho ainda está vazio.
-                            </div>
-                        }
-                        {
-                            cart.map((item) => {
-                                return <li class="flex py-6">
-                                    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                        <Image
-                                            src={"/" + item.image}
-                                            class="h-full w-full object-cover object-center"
-                                            alt={item.nome}
-                                            width={100}
-                                            height={100} />
-                                    </div>
-
-                                    <div class="ml-4 flex flex-1 flex-col">
-                                        <div>
-                                            <div class="flex justify-between text-base font-medium text-gray-900">
-                                                <h3>
-                                                    <a href="#">{item.nome}</a>
-                                                </h3>
-                                                <p class="ml-4">{item.displayPreço}</p>
-                                            </div>
-                                            <p class="mt-1 text-sm text-gray-500">{item.descrição}</p>
-                                        </div>
-                                        <div class="flex flex-1 items-end justify-between text-sm">
-                                            <p class="text-gray-500">Qte {item.quantity}</p>
-
-                                            <div class="flex">
-                                                <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500" onClick={() => removeProductFromCart(item)}>Remover</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            })
-                        }
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-            <div class="flex justify-between text-base font-medium text-gray-900">
-                <p>Subtotal</p>
-                <p>{subtotal}</p>
-            </div>
-            <p class="mt-0.5 text-sm text-gray-500">O frete será calculado antes da finalização do pedido</p>
-            {
-                cart.length !== 0 &&
-                <div class="mt-6">
-                    <Link
-                    className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                    href={{
-                        pathname: '/checkout',
-                        query: { subtotal: subtotal, cart: JSON.stringify(cart) }
-                    }}
-                    >
-                    Finalizar pedido
-                    </Link>
-                </div>
             }
-
         </div>
-
     </>
 }
 
+const Cart = ({ cart, removeProductFromCart, closeCart }) => {
+    const [state, setState] = useState('default')
+
+    const changeState = (state) => {
+        console.log(state)
+        setState(state)
+    }
+    return <>
+        {
+            state === 'loading'
+                ?
+                <div className="grid place-content-center h-80">
+                    <Loading></Loading>
+                </div>
+
+                : state === 'success' ?
+                    <div class="p-8 space-y-4">
+                        <div class="flex w-96">
+                            <div class="bg-green-600 py-4 px-6 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-white fill-current" viewBox="0 0 16 16" width="20" height="20"><path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path></svg>
+                            </div>
+                            <div class="px-4 py-6 flex justify-between items-center w-full">
+                                <div>Pedido enviado</div>
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    <div>
+                        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                            <div class="flex items-start justify-between">
+                                <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Carrinho</h2>
+                                <div class="ml-3 flex h-7 items-center">
+                                    <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500" onClick={() => closeCart()}>
+                                        <span class="sr-only">Fechar carrinho</span>
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-8">
+                                <div class="flow-root">
+                                    <ul role="list" class="-my-6 divide-y divide-gray-200">
+                                        {cart.length == 0 &&
+                                            <div class="flex justify-center py-6">
+                                                Seu carrinho ainda está vazio.
+                                            </div>
+                                        }
+                                        {
+                                            cart.map((item) => {
+                                                return <li class="flex py-6">
+                                                    <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                        <Image
+                                                            src={"/" + item.image}
+                                                            class="h-full w-full object-cover object-center"
+                                                            alt={item.nome}
+                                                            width={100}
+                                                            height={100} />
+                                                    </div>
+
+                                                    <div class="ml-4 flex flex-1 flex-col">
+                                                        <div>
+                                                            <div class="flex justify-between text-base font-medium text-gray-900">
+                                                                <h3>
+                                                                    <a href="#">{item.nome}</a>
+                                                                </h3>
+                                                            </div>
+                                                            <p class="mt-1 text-sm text-gray-500">{item.descrição}</p>
+                                                        </div>
+                                                        <div class="flex flex-1 items-end justify-between text-sm">
+                                                            <p class="text-gray-500">Qte {item.quantity}</p>
+
+                                                            <div class="flex">
+                                                                <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500" onClick={() => removeProductFromCart(item)}>Remover</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            })
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {
+                            cart.length !== 0 &&
+                            <ShippingDetails changeState={changeState} />
+                        }
+                    </div>
+        }
+    </>
+}
 
 const Product = ({ product, addToCart }) => {
     return <div>
@@ -135,22 +269,20 @@ const Product = ({ product, addToCart }) => {
                     </p>
                 </div>
                 <div className='flex p-3 justify-center items-center gap-6 mx-5'>
-                    <p class="text-base text-neutral-600 dark:text-neutral-200">
-                        {product.displayPreço}
-                    </p>
                     <button
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
                         onClick={() => addToCart(product)} >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                         </svg>
-                        <span className='mx-3'>Adicionar ao carrinho </span>
+                        <span className='mx-3'>Adicionar ao pedido </span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 }
+
 const Shop = () => {
     const [state, setState] = useState(null)
     const [products, setProducts] = useState(null)
