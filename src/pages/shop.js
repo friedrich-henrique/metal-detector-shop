@@ -49,7 +49,7 @@ const ShippingDetails = ({ changeCartState, cart, resetParentCart }) => {
             theme: "light",
         });
 
-        const notifyError = () =>
+    const notifyError = () =>
         toast.error('Tivemos um erro ao processar seu pedido!', {
             position: "bottom-right",
             autoClose: 5000,
@@ -75,15 +75,17 @@ const ShippingDetails = ({ changeCartState, cart, resetParentCart }) => {
             cep: cep,
             telefone: telefone,
             products: cart
-        }).then(
-            setParentState('success'),
-            resetParentCart(),
-            notifySuccess()
+        }).then(res => {
+            if (res.status === 200) {
+                setParentState('success'),
+                    resetParentCart(),
+                    notifySuccess()
+            }
+        }
         ).catch(err => {
             notifyError()
             setParentState('error'),
-            console.log(errors)
-            setErrors(err.response)
+                setErrors(err.response)
         })
     };
 
@@ -308,7 +310,7 @@ const Shop = () => {
     const [subtotal, setSubtotal] = useState(0)
     const [cartState, setCartState] = useState('closed')
     const [count, setCount] = useState(0)
-        
+
     useEffect(() => {
         fetchProducts()
     }, [])
@@ -418,7 +420,6 @@ const Shop = () => {
                     cartState === 'closed' &&
                     <CartButton openCart={openCart} count={count} />
                 }
-
                 <ToastContainer
                     position="bottom-right"
                     autoClose={5000}

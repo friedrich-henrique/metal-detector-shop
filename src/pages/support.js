@@ -1,10 +1,37 @@
 import { useState, useEffect } from 'react';
 import axios from '@/lib/axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Support = () => {
     const [email, setEmail] = useState('')
     const [subject, setSubject] = useState('')
     const [message, setMessage] = useState('')
     const csrf = () => axios.get('/sanctum/csrf-cookie')
+    const notifySuccess = () =>
+        toast.success('Solitação realizada!', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+
+    const notifyError = () =>
+        toast.error('Tivemos um erro ao processar seu pedido!', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+
     const formSubmit = async (e) => {
         e.preventDefault()
         await csrf()
@@ -12,11 +39,19 @@ const Support = () => {
             email,
             subject,
             message
-        }).then( () => {
-            console.log('Form submitted')
+        }).then(res => {
+            console.log(res)
+            if (res.status === 200) {
+                setEmail('')
+                setSubject('')
+                setMessage('')
+                notifySuccess()
+            }
         })
-        .catch(err => {})
-        
+            .catch(err => {
+                notifyError()
+            })
+
     }
     return (
         <div>
@@ -43,7 +78,7 @@ const Support = () => {
                                 type="text"
                                 id="subject"
                                 class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
-                                placeholder="Escreva o tema central dp problema"
+                                placeholder="Escreva o tema central do problema"
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
                                 required />
@@ -55,8 +90,9 @@ const Support = () => {
                                 rows="6"
                                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
                                 placeholder="Escreva o que está acontecendo..."
-                                onChange={(e) => setMessage(e.target.value)}>
-                                {message}</textarea>
+                                onChange={(e) => setMessage(e.target.value)}
+                                value={message}
+                                ></textarea>
                         </div>
                         <div className="flex justify-end">
                             <button
@@ -69,6 +105,18 @@ const Support = () => {
                     </form>
                 </div>
             </section>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </div>
     )
 }
