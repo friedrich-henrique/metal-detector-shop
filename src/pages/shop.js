@@ -2,8 +2,7 @@ import Loading from '@/components/Loading';
 import axios from '@/lib/axios'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { notifySuccess, notifyError } from '@/helpers/toast'
 
 const CartButton = ({ openCart, count }) => {
     return <>
@@ -36,30 +35,6 @@ const ShippingDetails = ({ changeCartState, cart, resetParentCart }) => {
     const setParentState = (state) => {
         changeCartState(state)
     }
-
-    const notifySuccess = () =>
-        toast.success('Pedido realizado!', {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-
-    const notifyError = () =>
-        toast.error('Tivemos um erro ao processar seu pedido!', {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
 
     const handleSubmit = async (e) => {
         await csrf()
@@ -420,18 +395,6 @@ const Shop = () => {
                     cartState === 'closed' &&
                     <CartButton openCart={openCart} count={count} />
                 }
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="light"
-                />
             </div>
         }
     </>

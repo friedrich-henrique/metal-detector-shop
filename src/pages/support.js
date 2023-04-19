@@ -1,37 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from '@/lib/axios'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { notifySuccess, notifyError } from '@/helpers/toast'
 
 const Support = () => {
     const [email, setEmail] = useState('')
     const [subject, setSubject] = useState('')
     const [message, setMessage] = useState('')
     const csrf = () => axios.get('/sanctum/csrf-cookie')
-    const notifySuccess = () =>
-        toast.success('Solitação realizada!', {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-
-    const notifyError = () =>
-        toast.error('Tivemos um erro ao processar seu pedido!', {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
-
+    
     const formSubmit = async (e) => {
         e.preventDefault()
         await csrf()
@@ -105,18 +81,6 @@ const Support = () => {
                     </form>
                 </div>
             </section>
-            <ToastContainer
-                position="bottom-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
         </div>
     )
 }
